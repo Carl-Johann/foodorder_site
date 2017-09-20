@@ -1,0 +1,111 @@
+{% include 'foodorder/navbar.html' %}
+{% load static %}
+
+<!doctype html>
+
+{% block header %}
+<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+
+{% endblock header %}
+
+{% block content %}
+
+<div class="product_list_main">
+    <div class="main main-raised product_list_main">
+        <div class="container-fluid" >
+            <a href="#" class="btn taber" id="dp" data-date-format="yyyy-dd-mm" data-date="{{ current_order_date }}"> {{ current_order_date }} </a>            
+        </div>        
+
+        <div class="texst-right container-fluid" id="no-padding" >
+                    
+            
+            {% if items|length != 0 %}
+                <table id="sort-table" class="table product_table" data-sort-order="asc" >
+                    <thead>                           
+                        <tr>                    
+                            <th class="text-censter product_nr_th" id="no-padding" > Nr </th>
+                            <th class="text-left  "  id="no-padding-right"  > Produkt </th>
+                            <!--<th class="text-center" > Bestillings dato </th>-->
+                            <th class="text-center"  id="no-padding"> Antal små </th>
+                            <th class="text-center product_nr_sth"  id="no-psadding"> Pris lille </th>
+                            <th class="text-center"  id="no-padding"> Antal store </th>  
+                            <th class="text-center product_nsr_th"  id="no-padding"> Pris stor </th>  
+                        </tr>
+                    </thead>                            
+
+                    <tbody>
+                        
+                            {% for item in items %}                                                    
+                                <tr>
+                                    <td class="text-censter product_nr_td" id="no-padding"> {{ item.product__nr }} </td>
+                                    <td class="text-left" id="no-padding-right" > {{ item.product__title }} </td>                                                                                                            
+                                    <!--<td class="text-center"> {{ item.order__create_date.year }} - {{ item.order__create_date.day }} - {{ item.order__create_date.month }} {{ item.order__create_date.hour }}:{{ item.order__create_date.minute }} </td>-->
+                                    <td class="text-center" id="no-padding"> {{ item.small_order_quantity }} </td>
+                                    <td class="text-center product_nrs_td" id="no-padding"> {{ item.product__small_product_price }} </td>
+                                    <td class="text-center"> {{ item.large_order_quantity }} </td>                                        
+                                    <td class="text-center product_nr_std" id="no-padding-left"> {{ item.product__large_product_price }} </td>
+                                </tr>                            
+                            {% endfor %}                
+                    </tbody>
+                </table>
+
+
+                <!--<div class="text-right bekraeft_button">                     
+                    <a class="btn btn-success btn-sblock" type="submit" form="form" data-toggle="modal" href="#cartModal"> Bekræft </a>
+                </div>                 -->
+
+                <div class="container-fluid">
+                    <div class="text-right"> Samlet pris: <strong>{{ order_sum }}</strong></div>                             
+                    <br>
+                </div>
+                
+
+            {% else %}                
+                <div class="container" style="text-align: center">
+                    <h1> Ingen bestillinger på denne dato </h1>
+                </div><br>                        
+            {% endif %}
+                    
+    </div>
+</div>
+<br><br>
+
+<script>
+$('#dp').datepicker({
+  onRender: function(date) {    
+    var order_dates = "{{ orders|safe }}";
+
+    var clean_order_dates = order_dates.replace(/'/g, '"');
+    parsed_order_dates = JSON.parse(clean_order_dates); 
+
+    var primitive_date = date.valueOf();
+    var year = date.getFullYear();
+    var day = date.getDate();
+    var month = (date.getMonth() + 1 );
+        
+    if (month.toString().length == 1) { month = "0" + month }
+    if (day.toString().length == 1) { day = "0" + day }
+
+    var current_date = year + " - "  + day + " - " + month;
+
+    if(jQuery.inArray(current_date, parsed_order_dates) !== -1) { 
+        return date.getDate();
+    } else {        
+        return 'disabled'
+    }
+
+  }
+})
+
+  
+$('#dp').datepicker()
+  
+  
+  .on('changeDate', function(ev){
+    var href = window.location.protocol + "//" + window.location.host + "/my_orders/" + ev.date.getFullYear() + "-" + ev.date.getDate() + "-" + (ev.date.getMonth() + 1 );
+    window.location.replace(href);
+    
+});
+</script>
+
+{% endblock content %}
