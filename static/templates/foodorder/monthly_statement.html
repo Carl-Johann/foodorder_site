@@ -1,0 +1,114 @@
+{% include 'foodorder/navbar.html' %}
+{% load static %}
+
+
+<!doctype html>
+<head>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+</head>
+
+<body>
+    {% block content %}    
+
+    <br>
+    <div class="container">
+        <div class="main main-raised">        
+            
+            <div class="container-fluid"> 
+                <div style="margin-top: -24px; color: white; ">                                    
+                    <ul class="nav nav-tabs" style="background-color: #E54644">                    
+                        <li class="active" style="padding-top: 0.7em; padding-bottom: 0.7em; ">
+                            <h4>MÅNEDLIG OPGØRELSE</h4>
+                        </li>
+                    </ul>
+                </div>        
+            </div>
+                    
+            <div class="container-fluid">
+                <a class="btn" id="dp" data-date-format="yyyy-mm" data-date="{{ datepicker_date }}" data-date-viewMode="1" data-date-minViewMode="1" > {{ selected_month }} </a>            
+            </div>    
+            <!-- if there are any items today  -->
+            {% if items|length != 0 %}
+                <table class="table" >                            
+                    
+                    <thead>                                                    
+                        <tr>
+                            <th class="text-center" > Navn </th>
+                            <th class="text-center" > Beløb for {{ selected_month|lower }} </th>
+                        </tr>                
+                    </thead>                            
+
+                    <tbody>
+                        {% for order in orders_this_month_list %}
+                            <tr id="{{ product.pk }}" class="admin-table-tr" data-toggle="modal" data-target="#itemmodal-{{ order.user__pk }}">                         
+                                <td class="text-center">  
+                                    {% if order.user__first_name != "" and order.user__last_name != "" %} 
+                                        {{ order.user__first_name }} {{ order.user__last_name }}
+                                    {% else %}
+                                    {{ order.user__username }}
+                                    {% endif %}
+                                </td>
+
+                                <td class="text-center"> <strong> {{ order.total_sum_this_month }} </strong> </td>
+                            </tr>
+                        {% endfor %}          
+                    </tbody><!-- End of items table body -->
+
+                </table><!-- End of items table -->
+            {% else %} <!-- - if there aren't any orders -->        
+                <div style="text-align: center">
+                    <h1> Ingen ordrer denne måned </h1>
+                </div><br> 
+            {% endif %}            
+            <br>
+        </div>
+    </div>
+
+    {% for order in orders_this_month_list %}
+        <div class="container">
+            <div class="modal fade" id="itemmodal-{{ order.user__pk }}"> <br><br><br><br>            
+                <div class="modal-dialog animated" style="width: 90%; margin: auto;">
+                    <div class="modal-content">
+                        
+                        <table class="table">
+                            <thead>                           
+                                <tr>
+                                    <th class="text-left  " > Produkt </th>         
+                                    <th class="text-center" > Dato </th>                                                        
+                                    <th class="text-center" > Antal små </th>                    
+                                    <th class="text-center" id="no-padding-left" > Antal store </th>
+                                </tr>
+                            </thead>                            
+
+                            <tbody>                                            
+                                {% for item in items %}
+                                    {% if item.order__user__pk == order.user__pk %} 
+                                        <tr>                                                        
+                                            <td class="text-left  " > {{ item.product__title }} </td>                                                        
+                                            <td class="text-center" > {{ item.order__create_date|date:"d M" }} </td>                                             
+                                            <td class="text-center" > <label class="form-control" style="margin-bottom: 0px;"> {{ item.small_order_quantity }} </label></td>
+                                            <td class="text-center" > <label class="form-control" style="margin-bottom: 0px;">{{ item.large_order_quantity }} </label></td>                                        
+                                        </tr> 
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor%}
+
+    <script>
+        $('#dp').datepicker() 
+        // When a date is clicked we get a new view, with the requested dates
+        .on('changeDate', function(ev){
+            var href = window.location.protocol + "//" + window.location.host + "/monthly_statement/" + ev.date.getFullYear() + "-" + (ev.date.getMonth() + 1 );
+            window.location.replace(href);        
+        });
+    </script>
+
+    {% endblock content %}
+</body>
+</html>

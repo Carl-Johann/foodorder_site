@@ -260,7 +260,7 @@
 					case 'th':
 						switch(target[0].className) {
 							case 'switch':
-								this.showMode(1);
+								// this.showMode(1);
 								break;
 							case 'prev':
 							case 'next':
@@ -444,7 +444,7 @@
 		headTemplate: '<thead>'+
 							'<tr>'+
 								'<th class="prev">&lsaquo;</th>'+
-								'<th colspan="5" class="switch"></th>'+
+								'<th colspan="5" class="not-switch"></th>'+
 								'<th class="next">&rsaquo;</th>'+
 							'</tr>'+
 						'</thead>',

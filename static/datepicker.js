@@ -17,6 +17,7 @@ $('#dp').datepicker({
 
     if(jQuery.inArray(current_date, parsed_order_dates) !== -1) { 
         return date.getDate();
+        // return date.getMonth();
     } else {        
         return 'disabled'
     }

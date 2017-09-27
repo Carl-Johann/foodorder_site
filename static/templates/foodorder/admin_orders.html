@@ -4,164 +4,186 @@
 <!doctype html>
 
 {% block header %}
-<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
 {% endblock header %}
 
 {% block content %}
+<br>
 
-<div class="product_list_main">
-    <div class="main main-raised product_list_main">
-        <table id="sort-table" class="table prosduct_table" data-sort-order="asc">            
-            
-            <thead>                
-
-                <!--<div class="container">
-                    <div class="form-group label-floating">
-                        <label class="control-label">Søg efter produkter</label>               
-                        <input class="form-control label-floating" type="text" id="search_input" onkeyup="search_in_product_table()" >
-                    </div>                                        
-                </div>-->
+<div class="container">
+    <div class="main main-raised">        
         
-                <div class="container-fluid" >
-                    <a href="#" class="btn taber" id="dp" data-date-format="yyyy-dd-mm" data-date="{{ current_order_date }}"> {{ current_order_date }} </a>            
-                </div>        
-        
+        <div class="container-fluid"> 
+            <div style="margin-top: -24px; color: white; ">                                    
+                <ul class="nav nav-tabs" style="background-color: #E54644">                    
+                    <li class="active" style="padding-top: 0.7em; padding-bottom: 0.7em; ">
+                        <h4>ALLE ORDRER</h4>
+                    </li>
+                </ul>
+            </div>        
+        </div>
+                
+        <div class="container-fluid">
+            <a class="btn" id="dp" data-date-format="yyyy-mm-dd" data-date="{{ current_order_date }}" > {{ current_order_date }} </a>            
+        </div>    
+        <!-- if there are any items today  -->
+        {% if items|length != 0 %}
+            <table class="table">                            
+                
+                <thead>                                                    
+                    <tr>
+                        <th class="text-center collapse_table_th" > Nr </th>
+                        <th class="text-left  "                   > Produkt </th> 
+                        <th class="text-center"                   > Navn </th>
+                        <th class="text-center"                   > Antal små </th>
+                        <th class="text-center collapse_table_th" > Pris lille </th>
+                        <th class="text-center"                   > Antal store </th>
+                        <th class="text-center collapse_table_th" > Pris Stor </th>
+                    </tr>                
+                </thead>                            
 
-                <tr>                    
-                    <th class="text-center product_nr_th" > <a class="order_button" onclick="order(0)"> Nr </a></th>
-                    <th class="text-left"   > Produkt </th> 
-                    <th class="text-center" > Navn </th>
-                    <th class="text-center" > <a class="order_button" onclick="order(3)"> Antal små</a></th>
-                    <th class="text-center product_nr_th" > Pris lille </th>
-                    <th class="text-center" > <a class="order_button" onclick="order(5)"> Antal store </a></th>
-                    <th class="text-center product_nr_th" > <a class="order_button" onclick="order(5)"> Pris Stor </a></th>
-                </tr>
+                <tbody>
+                    {% for item in items %}
+                        <tr id="{{ product.pk }}" class="admin-table-tr" data-toggle="modal" data-target="#itemmodal-{{ item.pk }}">                          
+                            <td class="text-center collapse_table_td"   > <label class="form-control" style="margin-bottom: 0px;"> {{ item.product__nr }} </label> </td>
+                            <td                                         > {{ item.product__title }} </td>                                
+                            <td class="text-center"                     > {{ item.order__user__username }} </td>
+                            <td class="text-center"                     > {{ item.small_order_quantity }} </td>                                 
+                            <td class="text-center collapse_table_td"   > {{ item.product__small_product_price }} </td>
+                            <td class="text-center"                     > {{ item.large_order_quantity }} </td>
+                            <td class="text-center collapse_table_td"   > {{ item.product__large_product_price }} </td>
+                        </tr>                            
+                    {% endfor %}                   
+                </tbody><!-- End of items table body -->
 
-            </thead>                            
-
-            <tbody>
-                    <div class="container-fluid">                        
-                        {% for item in items %}                                                    
-                            <tr id="{{ product.pk }}" class="admin-table-tr" data-toggle="modal" data-target="#itemmodal-{{ item.product__id }}">  
-                                <td class="product_nr_td"> {{ item.product__nr }} </td>
-                                <td> {{ item.product__title }} </td>
-                                <td class="text-center"> {{ item.order__user__username }} </td>
-                                <td class="text-center"> {{ item.small_order_quantity }} </td>
-                                <td class="text-center product_nr_td"> {{ item.product__small_product_price }} </td>
-                                <td class="text-center"> {{ item.large_order_quantity }} </td>
-                                <td class="text-center product_nr_td"> {{ item.product__large_product_price }} </td>
-                            </tr>                            
-                        {% endfor %}                                                
-                        
-                    </div>                
-            </tbody>
-                    
-        </table>
-        
-            <!--<div class="container">                     
-                <a class="btn btn-success btn-block" type="submit" form="form" data-toggle="modal" href="#cartModal"> Bekræft </a>
-            </div>                 -->
-        
+            </table><!-- End of items table -->        
+        {% else %} <!-- - if there aren't any orders -->        
+            <div style="text-align: center">
+                <h1> Ingen bestillinger d. {{ current_order_date }} </h1>
+            </div><br> 
+        {% endif %}            
         <br>
     </div>
 </div>
 
-
+<!-- modal to show when an items-table row is clicked -->
 {% for item in items %}
-<div class="modal fade" id="itemmodal-{{ item.product__id }}">
-    <br><br><br><br>
-    <div class="container">
-        <div class="modal-dialog animated" style="width: 100%; margin: auto;">
+<div class="container">
+    <div class="modal fade" id="itemmodal-{{ item.pk }}"> <br><br><br><br>    
+        <div class="modal-dialog animated" style="width: 90%; margin: auto;">
             <div class="modal-content">                
 
-                <div class="modal-body" id="modal-body">
-                    <form action="{% url 'create_items_and_order' %}" method="post" id="modal-cart-form"> {% csrf_token %}
-                        
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th></th>                                    
-                                </tr>
-                            </thead>
+                <div class="modal-header">
+                    <button  type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>                    
+                    <h4 class="modal-title" > Produkt detaljer </h4> <br>
+                </div>
 
-                            <tbody>
-                                <!--<tr> <td class="text-left" > <strong>  </strong> {{ item.order__user__username }} </td> </tr>-->
-                                
-                                {% if item.order__user__email != "" %} <tr> <td class="text-left" > <strong> Email: </strong> {{ item.order__user__email }}</td> </tr> {% endif %}
+                <form action="{% url 'update_item_quantity' %}" method="post" id="modal-cart-form"> {% csrf_token %}
+                    
+                    <table class="table">                        
+                        <tbody>                                
+                            <!-- If the user provided an email when he registered -->
+                            {% if item.order__user__email != "" %} <tr> <td class="text-left" > <strong> Email: </strong> {{ item.order__user__email }}</td> </tr> {% endif %}
+                            
+                            <tr> 
                                 {% if item.order__user__first_name != "" or item.order__user__last_name != "" %} 
-                                    <tr> <td class="text-left" > <strong> Navn: </strong> 
+                                    <td class="text-left" > <strong> Navn: </strong> 
                                         {{ item.order__user__first_name }} {{ item.order__user__last_name }}
-                                    </td> </tr> 
+                                    </td> 
                                 {% else %}
-                                    <tr> <td class="text-left"> <strong> Brugernavn: </strong>  {{ item.order__user__username }}</td></tr>
+                                    <td class="text-left"> <strong> Brugernavn: </strong>  {{ item.order__user__username }}</td> 
                                 {% endif %}
-                                
-                                <tr> <td class="text-left" > <strong> Produkt status: </strong> 
+                            </tr>
+
+                            <tr> 
+                                <td class="text-left" > <strong> Produkt status: </strong> 
                                     {% if item.product__is_active == True %}
                                         Sælges
                                     {% else %}
-                                        Sælges ikke mere
-                                    {% endif %}
-                                    
-                                </td> </tr>                                
-                                <tr> <td class="text-left" > <strong> Produkt og Nr: </strong> {{ item.product__nr }} - {{ item.product__title }} </td> </tr>
-                                <tr> <td class="text-left" > <strong> Pris lille: </strong> {{ item.product__small_product_price }} </td> </tr>
-                                <tr> <td class="text-left" > <strong> Pris stor: </strong> {% if item.product__large_product_price != 0 %} {{ item.product__large_product_price }} {% else %} Var ikke tilgænglig {% endif %}</td> </tr>
-                                <tr> <td class="text-left" > <strong> Produkt antal - lille: </strong> {{ item.small_order_quantity }} </td> </tr>
-                                <tr> <td class="text-left" > <strong> Produkt antal - stor: </strong> {{ item.large_order_quantity }} </td> </tr>
-                            </tbody>
-                        
-                        </table>
-                        
+                                        Sælges ikke
+                                    {% endif %}                                    
+                                </td> 
+                            </tr>
 
-                        <!--<div class="text-right">
-                            <button onclick="confirmOrder()" id="confirm_order_btn load" class="confirm_order_btn btn btn-lg btn-success" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Bestiller "> Bestil </button>
-                        </div>-->
+                            <tr> <td class="text-left" > <strong> Produkt og Nr: </strong> {{ item.product__nr }} - {{ item.product__title }} </td> </tr>
+                            <tr> <td class="text-left" > <strong> Pris lille: </strong> {{ item.product__small_product_price }} </td> </tr>
+                            <tr> <td class="text-left" > <strong> Pris stor: </strong> {% if item.product__large_product_price != 0 %} {{ item.product__large_product_price }} {% else %} Var ikke tilgænglig {% endif %}</td> </tr>
+                            <tr> <td class="text-left" > <strong> Produkt antal - lille: </strong> {{ item.small_order_quantity }} </td> </tr>
+                            <tr> <td class="text-left" > <strong> Produkt antal - stor: </strong> {{ item.large_order_quantity }} </td> </tr>
+                            <tr> <td class="text-left" style="padding-top: 0px; padding-bottom: 0px;"> <input name="new_small_quantity" style="margin-top: -17px" class="form-control" placeholder="Nyt lille produkt antal" min="0" type="number" required> </td></tr>
+                            <tr> <td class="text-left" style="padding-top: 0px; padding-bottom: 0px;"> <input name="new_large_quantity" style="margin-top: -17px" class="form-control" placeholder="Nyt store produkt antal" min="0" type="number" required> </td></tr>
+                            <!-- The viewer isn't supposed to see the primary key, but it we need it for reference later -->
+                            <input type="hidden" name="product_pk" value="{{ item.pk }}">
+                            
+                        </tbody>
+                    
+                    </table>                    
 
-                    </form>
-                </div>                                
-            </div>
-        </div>
+                    <!-- Modal form submit btn -->
+                    <div class="text-right" style="padding-right: 24px; padding-bottom: 24px; margin-top: -1.3em;">
+                        <button type="submit" class="btn btn-lg btn-success">Gem </button>
+                    </div>
+
+                </form>                                    
+            </div> <br><br>
+        </div>        
     </div>    
 </div>
+
+</div>
 {% endfor %}
+<br><br>
 
 <script>
-$('#dp').datepicker({
-  onRender: function(date) {    
-    var order_dates = "{{ orders|safe }}";
-
-    var clean_order_dates = order_dates.replace(/'/g, '"');
-    parsed_order_dates = JSON.parse(clean_order_dates); 
-
-    var primitive_date = date.valueOf();
-    var year = date.getFullYear();
-    var day = date.getDate();
-    var month = (date.getMonth() + 1 );
-        
-    if (month.toString().length == 1) { month = "0" + month }
-    if (day.toString().length == 1) { day = "0" + day }
-
-    var current_date = year + " - "  + day + " - " + month;
-
-    if(jQuery.inArray(current_date, parsed_order_dates) !== -1) { 
-        return date.getDate();
-    } else {        
-        return 'disabled'
-    }
-
-  }
-})
-
-  
-$('#dp').datepicker()
-  
-  
-  .on('changeDate', function(ev){
-    var href = window.location.protocol + "//" + window.location.host + "/admin_orders/" + ev.date.getFullYear() + "-" + ev.date.getDate() + "-" + (ev.date.getMonth() + 1 );
-    window.location.replace(href);
     
-});
+    // Makes sure that either one of the two, 'new_small_quantity' or 'new_large_quantity' are NOT empty.
+    jQuery(function ($) {
+        var $inputs = $('input[name=new_small_quantity],input[name=new_large_quantity]');
+        $inputs.on('input', function () {
+            // Set the required property of the other input to false if this input is not empty.
+            $inputs.not(this).prop('required', !$(this).val().length);
+        });
+    });
+
+    // Calls the datepicker
+    $('#dp').datepicker({
+        // When it renders
+        onRender: function(date) {    
+            // We get the supplied 'orders' and make sure they are safe
+            var order_dates = "{{ orders|safe }}";
+
+            // jQuery can only parse JSON if the strings in the dict are in double quotes, not single quotes
+            var clean_order_dates = order_dates.replace(/'/g, '"');
+            parsed_order_dates = JSON.parse(clean_order_dates); 
+
+
+            var year = date.getFullYear();
+            var day = date.getDate();
+            // Adds '1' mathematically to 'date.getMonth()' because Django handle months as 0-11, and Jquery as 1-12
+            var month = (date.getMonth() + 1 );
+            
+            // To compare the dates from the datepicker to the dates supplied by view, we have to add a 0 - from '1' to '01'
+            if (month.toString().length == 1) { month = "0" + month }
+            if (day.toString().length == 1) { day = "0" + day }
+
+            // Creates a string we can compare the current datepicker date, to all the dates supplied from the view
+            var current_date = year + " - " + month + " - " + day;
+            
+            if(jQuery.inArray(current_date, parsed_order_dates) !== -1) { 
+                return date.getDate();
+            } else {        
+                return 'disabled'
+            }
+
+        }
+    })    
+    
+    // When a date is clicked we get a new view, with the requested dates
+    .on('changeDate', function(ev){
+        var href = window.location.protocol + "//" + window.location.host + "/admin_orders/" + ev.date.getFullYear() + "-" + (ev.date.getMonth() + 1 ) + "-" + ev.date.getDate();
+        window.location.replace(href);        
+    });
+
 </script>
 
 

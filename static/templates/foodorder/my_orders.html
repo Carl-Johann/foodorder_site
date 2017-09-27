@@ -10,102 +10,110 @@
 
 {% block content %}
 
-<div class="product_list_main">
-    <div class="main main-raised product_list_main">
-        <div class="container-fluid" >
-            <a href="#" class="btn taber" id="dp" data-date-format="yyyy-dd-mm" data-date="{{ current_order_date }}"> {{ current_order_date }} </a>            
+<br>
+<div class="container">
+    <div class="main main-raised">
+        
+        <div class="container-fluid"> 
+            <div style="margin-top: -24px; color: white; ">                                        
+                <ul class="nav nav-tabs" style="background-color: #E54644">                    
+                    <li class="active" style="padding-top: 0.7em; padding-bottom: 0.7em; ">
+                        <h4>MINE ORDRER</h4>
+                    </li>
+                </ul>
+            </div>        
+        </div>
+
+
+        <div class="container-fluid">
+            <a href="#" class="btn" id="dp" data-date-format="yyyy-mm-dd" data-date="{{ current_order_date }}"> {{ current_order_date }} </a>            
         </div>        
 
-        <div class="texst-right container-fluid" id="no-padding" >
-                    
             
-            {% if items|length != 0 %}
-                <table id="sort-table" class="table product_table" data-sort-order="asc" >
-                    <thead>                           
-                        <tr>                    
-                            <th class="text-censter product_nr_th" id="no-padding" > Nr </th>
-                            <th class="text-left  "  id="no-padding-right"  > Produkt </th>
-                            <!--<th class="text-center" > Bestillings dato </th>-->
-                            <th class="text-center"  id="no-padding"> Antal små </th>
-                            <th class="text-center product_nr_sth"  id="no-psadding"> Pris lille </th>
-                            <th class="text-center"  id="no-padding"> Antal store </th>  
-                            <th class="text-center product_nsr_th"  id="no-padding"> Pris stor </th>  
-                        </tr>
-                    </thead>                            
-
-                    <tbody>
-                        
-                            {% for item in items %}                                                    
-                                <tr>
-                                    <td class="text-censter product_nr_td" id="no-padding"> {{ item.product__nr }} </td>
-                                    <td class="text-left" id="no-padding-right" > {{ item.product__title }} </td>                                                                                                            
-                                    <!--<td class="text-center"> {{ item.order__create_date.year }} - {{ item.order__create_date.day }} - {{ item.order__create_date.month }} {{ item.order__create_date.hour }}:{{ item.order__create_date.minute }} </td>-->
-                                    <td class="text-center" id="no-padding"> {{ item.small_order_quantity }} </td>
-                                    <td class="text-center product_nrs_td" id="no-padding"> {{ item.product__small_product_price }} </td>
-                                    <td class="text-center"> {{ item.large_order_quantity }} </td>                                        
-                                    <td class="text-center product_nr_std" id="no-padding-left"> {{ item.product__large_product_price }} </td>
-                                </tr>                            
-                            {% endfor %}                
-                    </tbody>
-                </table>
-
-
-                <!--<div class="text-right bekraeft_button">                     
-                    <a class="btn btn-success btn-sblock" type="submit" form="form" data-toggle="modal" href="#cartModal"> Bekræft </a>
-                </div>                 -->
-
-                <div class="container-fluid">
-                    <div class="text-right"> Samlet pris: <strong>{{ order_sum }}</strong></div>                             
-                    <br>
-                </div>
+        {% if items|length != 0 %}
+            <table class="table">
                 
+                <thead>                           
+                    <tr>                    
+                        <th class="text-center collapse_table_th"         > Nr </th>
+                        <th class="text-left  "  id="no-padding-right"    > Produkt </th>                            
+                        <th class="text-center"  id="no-padding"          > Antal små </th>
+                        <th class="text-center"  id="no-padding"          > Pris lille </th>
+                        <th class="text-center"  id="no-padding"          > Antal store </th>  
+                        <th class="text-center"  id="no-padding"          > Pris stor </th>  
+                    </tr>
+                </thead>                            
 
-            {% else %}                
-                <div class="container" style="text-align: center">
-                    <h1> Ingen bestillinger på denne dato </h1>
-                </div><br>                        
-            {% endif %}
-                    
+                <tbody>
+                    {% for item in items %}                                                    
+                        <tr>
+                            <td class="text-center collapse_table_td"     > {{ item.product__nr }} </td>
+                            <td class="text-left  " id="no-padding-right" > {{ item.product__title }} </td>
+                            <td class="text-center" id="no-padding"       > {{ item.small_order_quantity }} </td>
+                            <td class="text-center" id="no-padding"       > {{ item.product__small_product_price }} </td>
+                            <td class="text-center" id="no-padding"       > {{ item.large_order_quantity }} </td>
+                            <td class="text-center" id="no-padding-left"  > {{ item.product__large_product_price }} </td>
+                        </tr>                            
+                    {% endfor %}              
+                </tbody> <!-- End of table body -->
+            </table> <!-- End of table -->
+
+            <div class="container-fluid">
+                <div class="text-right"> Samlet pris: <strong>{{ order_sum }}</strong></div><br><br>
+            </div>
+            
+
+        {% else %}                
+            <div style="text-align: center">
+                <h1> Ingen bestillinger d. {{ current_order_date }} </h1>
+            </div><br><br>                        
+        {% endif %}
+                        
     </div>
 </div>
-<br><br>
 
-<script>
-$('#dp').datepicker({
-  onRender: function(date) {    
-    var order_dates = "{{ orders|safe }}";
+<script>    
 
-    var clean_order_dates = order_dates.replace(/'/g, '"');
-    parsed_order_dates = JSON.parse(clean_order_dates); 
+    // Calls the datepicker
+    $('#dp').datepicker({
+        // When it renders
+        onRender: function(date) {    
+            // We get the supplied 'orders' and make sure they are safe 
+            var order_dates = "{{ orders|safe }}";
 
-    var primitive_date = date.valueOf();
-    var year = date.getFullYear();
-    var day = date.getDate();
-    var month = (date.getMonth() + 1 );
-        
-    if (month.toString().length == 1) { month = "0" + month }
-    if (day.toString().length == 1) { day = "0" + day }
+            // jQuery can only parse JSON if the strings in the dict are in double quotes, not single quotes
+            var clean_order_dates = order_dates.replace(/'/g, '"');
+            parsed_order_dates = JSON.parse(clean_order_dates); 
 
-    var current_date = year + " - "  + day + " - " + month;
 
-    if(jQuery.inArray(current_date, parsed_order_dates) !== -1) { 
-        return date.getDate();
-    } else {        
-        return 'disabled'
-    }
+            var year = date.getFullYear();
+            var day = date.getDate();
+            // Adds '1' mathematically to 'date.getMonth()' because Django get months as 0-11,
+            // and Jquery as, 1-12
+            var month = (date.getMonth() + 1 );
+            
+            // To compare the dates from the datepicker to the dates supplied from view, we have to add a 0 - from '1' to '01'
+            if (month.toString().length == 1) { month = "0" + month }
+            if (day.toString().length == 1) { day = "0" + day }
 
-  }
-})
+            // Creates a string we can compare the current datepicker date, to all the dates supplied from the view
+            var current_date = year + " - " + month + " - " + day ;
+            
+            if(jQuery.inArray(current_date, parsed_order_dates) !== -1) { 
+                return date.getDate();
+            } else {        
+                return 'disabled'
+            }
 
-  
-$('#dp').datepicker()
-  
-  
-  .on('changeDate', function(ev){
-    var href = window.location.protocol + "//" + window.location.host + "/my_orders/" + ev.date.getFullYear() + "-" + ev.date.getDate() + "-" + (ev.date.getMonth() + 1 );
-    window.location.replace(href);
+        }
+    })    
     
-});
+    // When a date is clicked we get a new view, with the requested dates
+    .on('changeDate', function(ev){
+        var href = window.location.protocol + "//" + window.location.host + "/my_orders/" + ev.date.getFullYear() + "-" + (ev.date.getMonth() + 1 ) + "-" + ev.date.getDate();
+        window.location.replace(href);        
+    });
+
 </script>
 
 {% endblock content %}

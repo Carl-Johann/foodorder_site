@@ -63,10 +63,11 @@
 }
 .datepicker td.day:hover {
   background: #eeeeee;
-  cursor: pointer;
+  
 }
 .datepicker td.day.disabled {
-  color: #eeeeee;
+  color: #eeeeee;  
+  cursor: default
 }
 .datepicker td.old,
 .datepicker td.new {
@@ -167,6 +168,10 @@
 }
 .datepicker th.switch {
   width: 145px;
+}
+.datepicker th.not-switch:hover {
+  /*width: 145px;*/
+  cursor: default
 }
 .datepicker th.next,
 .datepicker th.prev {
