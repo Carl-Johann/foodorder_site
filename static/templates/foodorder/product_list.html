@@ -5,17 +5,17 @@
 
 <!doctype html>
 <head>
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />    
+    
 </head>
 
 <body>
-    {% block content %}    
-
+    {% block content %}
 
     {% if is_past_allowed_time == False %}
 
     <div class="main main-raised">        
-        <table id="sort-table" class="table product_table" data-sort-order="asc">            
+        <table id="sort-table" class="table product_table" data-sort-order="desc">            
             
             <thead>                
 
@@ -28,12 +28,12 @@
                 </div>
                 
                 <tr> <!-- Table header row -->
-                    <th class="text-center collapse_table_th"   > <a class="order_button" onclick="order(0)"              > <p> Nr </p> </a> </th>
+                    <th class="text-center collapse_table_th"   > <a class="order_button" onclick="order(0)"              > Nr </a> </th>
                     <th class="text-left  " id="no-padding-right"                                                         > Produkt </th> 
                     <th class="text-center" id="no-padding"                                                               > Antal små </th> 
-                    <th class="text-center" id="no-padding"     > <a class="order_button" onclick="order(3)"              > <p> Pris Lille </p> </a> </th>
+                    <th class="text-center" id="no-padding"     > <a class="order_button" onclick="order(3)"              > <p style="margin: 0px;"> Pris Lille </p> </a> </th>
                     <th class="text-center" id="no-padding"                                                               > Antal store </th>
-                    <th class="text-center" id="no-padding-left"> <a class="order_button" onclick="order(5)"              > <p> Pris Stor </p> </a> </th>                    
+                    <th class="text-center" id="no-padding-left"> <a class="order_button" onclick="order(5)"              > <p style="margin: 0px;"> Pris Stor </p> </a> </th>                    
                 </tr>
 
             </thead>                            
@@ -43,10 +43,10 @@
                 {% for product in products %}
                     <tr id="{{ product.pk }}">                                                                
                         <td class="text-center collapse_table_td"       > {{ product.nr }} </td>
-                        <td                     id="no-padding-right"   > {{ product.title }} </td>
-                        <td class="text-center" id="no-padding"         > <input id="quantity_small_{{ forloop.counter }}" style="margin-bottom: 20px; text-align: center;" class="form-control" placeholder="Små" form="form" min="0" type="number"> </td>
-                        <td class="text-center" id="no-padding"         > {{ product.small_product_price }} </td>
-                        <td class="text-center" id="no-padding"         > {% if product.large_product_price != 0 %} <input id="quantity_large_{{ forloop.counter }}" style="margin-bottom: 20px; text-align: center;" placeholder="Stor" class="form-control" form="form" min="0" type="number"> {% endif %} </td>
+                        <td                     id="no-padding-right"   > {{ product.title }} </td>                        
+                        <td class="text-center" id="no-padding"  style="padding-top: 4px;"       > <input id="quantity_small_{{ product.pk }}"  class="form-control bøgse" placeholder="Små" form="form" min="0" max="9" type="number" pattern="\d*"> </td>
+                        <td class="text-center" id="no-padding"         > {{ product.small_product_price }} </td>                        
+                        <td class="text-center" id="no-padding"      style="padding-top: 4px;"   > {% if product.large_product_price != 0 %} <input id="quantity_large_{{ product.pk }}"  placeholder="Stor" class="form-control bøgse" form="form" min="0" max="9" type="number"> {% endif %} </td>
                         <td class="text-center" id="no-padding-left"    > {% if product.large_product_price != 0 %} {{ product.large_product_price }} {% endif %} </td> 
                     </tr>                            
                 {% endfor %}                                    
@@ -54,9 +54,9 @@
                     
         </table> <!-- End table -->
         
-        <!-- Presents the '#cartModal' modal -->
-        <div class="container-fluid text-right">                     
-            <a class="btn btn-success" type="submit" form="form" data-toggle="modal" href="#cartModal"> Bekræft </a>
+        
+        <div class="container-fluid text-right"> <!-- Presents the '#cartModal' modal -->
+            <a class="btn btn-default" type="submit" form="form" data-toggle="modal" href="#cartModal"> Bekræft </a>
         </div>                 
         
         <br>
@@ -72,7 +72,7 @@
 
                     <!-- Modal header -->
                     <div class="modal-header"> 
-                        <button  type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>                    
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>                    
                         <h4 class="modal-title" > Bekræft Bestilling </h4>
                     </div>
 
@@ -86,7 +86,7 @@
                             
                             <table id="modal-table" class="table modal-cart-table" data-sort-order="desc">
                                 <tbody>
-
+<!--1900-->
                                     <div class="order_succes_alert alert alert-success" style="display: none;" >
                                         <div class="container-fluid">                                                                                        
                                             <i class="fa fa-check" aria-hidden="true" style="padding-right:1em;"></i>                                     
@@ -111,16 +111,30 @@
     </div><br><br>
 
     {% else %}
-        <!-- User cant add products -->    
+        <!-- User cant add products -->    <br><br><br><br><br>
         <div class="container" style="text-align: center">    
-            <h1>Du kan ikke bestille mere mad idag</h1>
+            <h1>Bestillinger er lukkede for idag</h1>
         </div>
     {% endif %}
+    
+    <style> 
+
+    .bøgse {
+
+        /*margin-top: -21px; */
+        /*padding-bottom: 0px;*/
+        text-align: center; 
+    }
+
+    </style>
 
     <script src="{% static 'product-modal.js' %}" type="text/javascript"></script>
     <script src="{% static 'tablesorter.js' %}" type="text/javascript"></script>
-
+    <script src="{% static 'concatenate_product_title_and_nr.js' %}" rel="text/javascript"></script>
 
     {% endblock content %}
+
+
+
 </body>
 </html>

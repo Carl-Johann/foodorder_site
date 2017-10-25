@@ -6,11 +6,19 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+class MasterOrder(models.Model):
+    create_date = models.DateTimeField(verbose_name='create date', auto_now=True)
+    sender = models.ForeignKey(User, null=True)
+    is_sent = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return u'%s - %s - %s' % ( self.create_date.year, self.create_date.month, self.create_date.day)
+
 class Order(models.Model):
+    master_order = models.ForeignKey(MasterOrder, default=1)
     user = models.ForeignKey(User)    
     create_date = models.DateTimeField(verbose_name='create date', auto_now=True)    
-    
-    
+
     def __unicode__(self):
         return u'%s | %s' % (self.user, self.create_date)
 
@@ -19,7 +27,7 @@ class Product(models.Model):
     small_product_price = models.DecimalField(max_digits=18, decimal_places=2, verbose_name='Small price')
     large_product_price = models.DecimalField(max_digits=18, decimal_places=2, verbose_name="Large price ( if none, leave it '0' )", default=0.00)    
     nr = models.PositiveIntegerField(verbose_name='nr', default=1)
-    is_active = models.BooleanField(verbose_name="Produktets aktiv status", default=True)
+    is_active = models.BooleanField(verbose_name="Is the product still sold?", default=True)
     
     def __unicode__(self):
         return u'%s | %s' % (self.nr, self.title)
@@ -30,6 +38,7 @@ class Item(models.Model):
     large_order_quantity = models.PositiveIntegerField(verbose_name='Large order quantity', default=0)
     product = models.ForeignKey(Product, verbose_name='product', related_name='product')
     
-
     def __unicode__(self):
         return u'%d store, %d små af %s' % (self.large_order_quantity, self.small_order_quantity, self.product.title )
+
+

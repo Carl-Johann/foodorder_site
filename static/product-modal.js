@@ -16,15 +16,16 @@ $('#cartModal').on('show.bs.modal', function(e) {
             return " stor" 
         }
     };
-    
-    table.find('tr').each(function (i, el) {
+    $window_width = $( window ).width();
+    table.find('tr').each(function (i, el) {        
         var $tds = $(this).find('td'),
-        row_id = $tds.eq(0).text(),
+        
+        product_nr = $tds.eq(0).text(),
         product_title = $tds.eq(1).text(),
         price_small = $tds.eq(3).text(),
         price_large = $tds.eq(5).text(),
-        quantity_small = document.getElementById('quantity_small_' + row_id.trim());
-        quantity_large = document.getElementById('quantity_large_' + row_id.trim());
+        quantity_small = document.getElementById('quantity_small_' + $tds.parent().attr('id').trim());        
+        quantity_large = document.getElementById('quantity_large_' + $tds.parent().attr('id').trim());
         
         var large_quantity = ""        
         
@@ -34,15 +35,19 @@ $('#cartModal').on('show.bs.modal', function(e) {
         
         try {
             if (quantity_small.value != "" || large_quantity != "" ) {
-                if (quantity_small.value != 0 || large_quantity != 0) {                    
+                if (quantity_small.value <= 9 && large_quantity <= 9) {
+                    
                     var $modal = $(this);
-                                    
                     var table = document.getElementById("modal-table");
-                    var row = table.insertRow(-1);
+                    var row = table.insertRow(0);
                    
                     var col1 = row.insertCell(0);
-                    col1.innerHTML = product_title;
-                    // $(col1).attr("id", "no-padding");
+                    if ($window_width <= 678) {                    
+                        col1.innerHTML = product_title;
+                    } else {
+                        col1.innerHTML = product_nr + " - " + product_title;
+                    }
+
                     $(col1).data("id", $tds.parent().attr('id'));
 
 
@@ -97,18 +102,16 @@ $('#cartModal').on('show.bs.modal', function(e) {
 
 }) // end show.bs.modal - cartModal
 
-function confirmOrder() {
-    console.log("confirmOrder click")
+function confirmOrder() {    
     $('#modal-cart-form').unbind('submit');
-    $("#modal-cart-form").submit(function(event) {
-        console.log("confirmOrder submit")
+    $("#modal-cart-form").submit(function(event) {        
         // Stop form from submitting normally                
         event.preventDefault();
         
         var formVals = $("#modal-cart-form").serialize();
             $('#modal-table').find('td').each(function(i, el) {                
 
-                if ( $(this).data('id') != undefined) {
+                if ( $(this).data('id') != undefined) {                    
                     formVals += '&' + encodeURIComponent('id' ) + '=' + $(this).data('id');
                 } else if ( $(this).data('large_quantity') != undefined) {
                     formVals += '&' + encodeURIComponent('large_quantity_' + $(this).data('quantity_id')) + '=' + $(this).data('large_quantity');
@@ -131,7 +134,11 @@ function confirmOrder() {
             setTimeout(function() {
                 $('.confirm_order_btn').button('reset');
                 $('.confirm_order_btn').hide();
-                $('.order_succes_alert').fadeIn( 200 );                                
+                
+        
+                current_date = new Date()
+                var href = window.location.protocol + "//" + window.location.host + "/my_orders/" + current_date.getFullYear() + "-" + (current_date.getMonth() + 1 ) + "-" + current_date.getDate();
+                window.location = href
             }, 150);
                         
         });

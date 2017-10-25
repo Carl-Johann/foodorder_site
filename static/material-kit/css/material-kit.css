@@ -23,6 +23,7 @@
   #no-padding { 
     padding-left: 1px;
     padding-right: 1px;
+    
   }
 
   #no-padding-left { 
@@ -44,13 +45,41 @@
 
 }
 
+@media (max-width: 678px) {
+  .navbar-right {
+    padding-right: 0px;    
+  }
+}
+
+@media (min-width: 678px) {
+  .navbar-right {
+    padding-right: 1em;    
+  }
+}
+
+
+.extend_row_td {
+    width: 14px;
+    overflow: hidden;
+    display: block;
+    color: rgb(50,50,50);
+}
+
+.fa-chevron-up:hover {      
+    color: rgb(50,50,50, 0.84);
+}
+
 .space_under {
   padding-bottom: 1em;
 }
 
 .admin-table-tr:hover {
   cursor: pointer; 
-  background-color: rgb(60, 72, 88, 0.1);    
+  background-color: rgb(60, 72, 88, 0.1);      
+}
+
+.admin-table-tr {
+  cursor: pointer; 
 }
 
 
@@ -175,6 +204,7 @@ a .material-icons {
 .bootstrap-datetimepicker-widget table td span,
 .presentation-page .section-cards .card,
 .index-page .section-cards .card,
+.extend_row_td,
 .product-page .flexi-nav > li a {
   -webkit-transition: all 150ms ease 0s;
   -moz-transition: all 150ms ease 0s;
@@ -290,7 +320,7 @@ input[type="file"] > input[type="button"]::-moz-focus-inner {
 .navbar .navbar-nav > li > a.btn.btn-default.dropdown-toggle, .open >
 .navbar .navbar-nav > li > a.btn.btn-default.dropdown-toggle:focus, .open >
 .navbar .navbar-nav > li > a.btn.btn-default.dropdown-toggle:hover {
-  background-color: #999999;
+  background-color: #999;
   color: #FFFFFF;
 }
 .btn:focus, .btn:active, .btn:hover, .btn.btn-default:focus, .btn.btn-default:active, .btn.btn-default:hover,
@@ -502,10 +532,10 @@ input[type="file"] > input[type="button"]::-moz-focus-inner {
   background-color: transparent;
   color: #00bcd4;
 }
-.btn.btn-success,
-.navbar .navbar-nav > li > a.btn.btn-success {
-  box-shadow: 0 2px 2px 0 rgba(76, 175, 80, 0.14), 0 3px 1px -2px rgba(76, 175, 80, 0.2), 0 1px 5px 0 rgba(76, 175, 80, 0.12);
-}
+/*.btn.btn-success,*/
+/*.navbar .navbar-nav > li > a.btn.btn-success {*/
+  /*box-shadow: 0 2px 2px 0 rgba(76, 175, 80, 0.14), 0 3px 1px -2px rgba(76, 175, 80, 0.2), 0 1px 5px 0 rgba(76, 175, 80, 0.12);*/
+/*}*/
 .btn.btn-success, .btn.btn-success:hover, .btn.btn-success:focus, .btn.btn-success:active, .btn.btn-success.active, .btn.btn-success:active:focus, .btn.btn-success:active:hover, .btn.btn-success.active:focus, .btn.btn-success.active:hover, .open > .btn.btn-success.dropdown-toggle, .open > .btn.btn-success.dropdown-toggle:focus, .open > .btn.btn-success.dropdown-toggle:hover,
 .navbar .navbar-nav > li > a.btn.btn-success,
 .navbar .navbar-nav > li > a.btn.btn-success:hover,
@@ -520,6 +550,7 @@ input[type="file"] > input[type="button"]::-moz-focus-inner {
 .navbar .navbar-nav > li > a.btn.btn-success.dropdown-toggle:focus, .open >
 .navbar .navbar-nav > li > a.btn.btn-success.dropdown-toggle:hover {
   background-color: #4caf50;
+  /*background-color: #9B9B9B;*/
   color: #FFFFFF;
 }
 .btn.btn-success:focus, .btn.btn-success:active, .btn.btn-success:hover,
@@ -1878,7 +1909,7 @@ output {
 }
 .form-group.is-focused .form-control {
   outline: none;
-  background-image: linear-gradient(#4CAF50, #4CAF50), linear-gradient(#D2D2D2, #D2D2D2);
+  background-image: linear-gradient(#FFB307, #FFB307), linear-gradient(#D2D2D2, #D2D2D2);
   background-size: 100% 2px, 100% 1px;
   box-shadow: none;
   transition-duration: 0.3s;
@@ -1890,7 +1921,7 @@ output {
   background-image: linear-gradient(#00bcd4, #00bcd4), linear-gradient(#D2D2D2, #D2D2D2);
 }
 .form-group.is-focused.form-success .form-control {
-  background-image: linear-gradient(#4caf50, #4caf50), linear-gradient(#D2D2D2, #D2D2D2);
+  background-image: linear-gradient(#FFB307, #FFB307), linear-gradient(#D2D2D2, #D2D2D2);
 }
 .form-group.is-focused.form-warning .form-control {
   background-image: linear-gradient(#ff9800, #ff9800), linear-gradient(#D2D2D2, #D2D2D2);
@@ -2641,9 +2672,10 @@ select.form-control[multiple], .form-group.is-focused select.form-control[multip
   color: #ffffff;
 }
 .navbar.navbar-success {
-  background-color: #4caf50;
+  /*background-color: #4caf50;*/
+  background: linear-gradient(0deg,#323232,#414141);
   color: #ffffff;
-  box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(76, 175, 80, 0.46);
+  /*box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(76, 175, 80, 0.46);*/
 }
 .navbar.navbar-success .navbar-form .form-group input.form-control::-moz-placeholder,
 .navbar.navbar-success .navbar-form input.form-control::-moz-placeholder {
@@ -2662,7 +2694,9 @@ select.form-control[multiple], .form-group.is-focused select.form-control[multip
 }
 .navbar.navbar-success .dropdown-menu li > a:hover, .navbar.navbar-success .dropdown-menu li > a:focus {
   color: #FFFFFF;
-  background-color: #4caf50;
+  /**/
+  background-color: #ffb308;
+  /**/
   box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(76, 175, 80, 0.4);
 }
 .navbar.navbar-success .dropdown-menu .active > a {

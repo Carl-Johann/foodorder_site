@@ -15,51 +15,60 @@
         
         <div class="container-fluid"> 
             <div style="margin-top: -24px; color: white; ">                                    
-                <ul class="nav nav-tabs" style="background-color: #E54644">                    
+                <ul class="nav nav-tabs" style="background-color: green">                    
                     <li class="active" style="padding-top: 0.7em; padding-bottom: 0.7em; ">
                         <h4>ALLE ORDRER</h4>
                     </li>
                 </ul>
             </div>        
         </div>
-                
+    
         <div class="container-fluid">
-            <a class="btn" id="dp" data-date-format="yyyy-mm-dd" data-date="{{ current_order_date }}" > {{ current_order_date }} </a>            
+            <a class="btn btn-default" id="dp" data-date-format="yyyy-mm-dd" data-date="{{ current_order_date|date:'Y - m - d' }}" > {{ current_order_date|date:'Y - m - d' }} </a>            
+                {% if items|length != 0 and date|date:'d' == current_order_date|date:'d' and is_todays_order_sent == False%}                     
+                    <a class="btn btn-default" style="padding-left: 25px; padding-right: 25px" onclick="return confirm('Er du sikker på du vil bestille alle dagens ordrer?')" href="{% url 'send_order' date_year=current_order_date.year date_month=current_order_date.month date_day=current_order_date.day %}"> send ordre </a>
+                {% endif %}
         </div>    
+    
         <!-- if there are any items today  -->
         {% if items|length != 0 %}
-            <table class="table">                            
+        <!-- Start of table -->        
+            <table class="table" id="sort-table">                            
                 
-                <thead>                                                    
+                <thead>
                     <tr>
                         <th class="text-center collapse_table_th" > Nr </th>
-                        <th class="text-left  "                   > Produkt </th> 
-                        <th class="text-center"                   > Navn </th>
-                        <th class="text-center"                   > Antal små </th>
+                        <th class="text-left  " id="no-padding-right"> Produkt </th> 
+                        <th class="text-center" id="no-padding"   > Navn </th>
+                        <th class="text-center" id="no-padding"   > Små </th>
                         <th class="text-center collapse_table_th" > Pris lille </th>
-                        <th class="text-center"                   > Antal store </th>
+                        <th class="text-center" id="no-padding"   > Store </th>
                         <th class="text-center collapse_table_th" > Pris Stor </th>
+                        <th id="no-padding"></th>
                     </tr>                
                 </thead>                            
 
-                <tbody>
-                    {% for item in items %}
-                        <tr id="{{ product.pk }}" class="admin-table-tr" data-toggle="modal" data-target="#itemmodal-{{ item.pk }}">                          
-                            <td class="text-center collapse_table_td"   > <label class="form-control" style="margin-bottom: 0px;"> {{ item.product__nr }} </label> </td>
-                            <td                                         > {{ item.product__title }} </td>                                
-                            <td class="text-center"                     > {{ item.order__user__username }} </td>
-                            <td class="text-center"                     > {{ item.small_order_quantity }} </td>                                 
+                
+                <tbody id="product_table_body">
+                    {% for item in items %}                 
+                        <tr id="{{ product.pk }}" class="admin-tabsle-tr" data-toggle="modal" data-target="#itemmodal-{{ item.pk }}" style="cursor: pointer;">                          
+                            <td class="text-center collapse_table_td"   > <label class="form-control" style="margin-bottom: 0px; border-width: 0px;"> {{ item.product__nr }} </label> </td>
+                            <td id="no-padding-right"                   > {{ item.product__title }} </td>                                
+                            <td class="text-center" id="no-padding"     > {{ item.order__user__first_name }} {{ item.order__user__last_name|slice:"1" }}.  </td>
+                            <td class="text-center" id="no-padding"     > {{ item.small_order_quantity }} </td>                                 
                             <td class="text-center collapse_table_td"   > {{ item.product__small_product_price }} </td>
-                            <td class="text-center"                     > {{ item.large_order_quantity }} </td>
+                            <td class="text-center" id="no-padding"     > {{ item.large_order_quantity }} </td>
                             <td class="text-center collapse_table_td"   > {{ item.product__large_product_price }} </td>
+                            <td id="no-padding-left"><i class="fa fa-angle-right" aria-hidden="true"></i></td>
                         </tr>                            
                     {% endfor %}                   
                 </tbody><!-- End of items table body -->
-
-            </table><!-- End of items table -->        
+            </table> <!-- End of items table -->            
+            <!-- End of table -->   
+        
         {% else %} <!-- - if there aren't any orders -->        
             <div style="text-align: center">
-                <h1> Ingen bestillinger d. {{ current_order_date }} </h1>
+                <h1> Ingen bestillinger {{ current_order_date|date:'Y - m - d' }} </h1>
             </div><br> 
         {% endif %}            
         <br>
@@ -112,8 +121,9 @@
                             <tr> <td class="text-left" > <strong> Produkt antal - stor: </strong> {{ item.large_order_quantity }} </td> </tr>
                             <tr> <td class="text-left" style="padding-top: 0px; padding-bottom: 0px;"> <input name="new_small_quantity" style="margin-top: -17px" class="form-control" placeholder="Nyt lille produkt antal" min="0" type="number" required> </td></tr>
                             <tr> <td class="text-left" style="padding-top: 0px; padding-bottom: 0px;"> <input name="new_large_quantity" style="margin-top: -17px" class="form-control" placeholder="Nyt store produkt antal" min="0" type="number" required> </td></tr>
-                            <!-- The viewer isn't supposed to see the primary key, but it we need it for reference later -->
-                            <input type="hidden" name="product_pk" value="{{ item.pk }}">
+                            
+                            <input type="hidden" name="item_pk" value="{{ item.pk }}" >
+                            <input type="hidden" name="destination" value="admin_orders" >
                             
                         </tbody>
                     
@@ -121,7 +131,7 @@
 
                     <!-- Modal form submit btn -->
                     <div class="text-right" style="padding-right: 24px; padding-bottom: 24px; margin-top: -1.3em;">
-                        <button type="submit" class="btn btn-lg btn-success">Gem </button>
+                        <button type="submit" class="btn btn-lg btn-default"> Gem </button>
                     </div>
 
                 </form>                                    
@@ -134,8 +144,7 @@
 {% endfor %}
 <br><br>
 
-<script>
-    
+<script>    
     // Makes sure that either one of the two, 'new_small_quantity' or 'new_large_quantity' are NOT empty.
     jQuery(function ($) {
         var $inputs = $('input[name=new_small_quantity],input[name=new_large_quantity]');
@@ -185,6 +194,8 @@
     });
 
 </script>
+
+<script src="{% static 'concatenate_product_title_and_nr.js' %}" rel="text/javascript"></script>
 
 
 {% endblock content %}
