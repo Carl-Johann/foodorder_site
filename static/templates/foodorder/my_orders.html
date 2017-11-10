@@ -13,63 +13,63 @@
 <br>
 <div class="container">
 <div class="main main-raised">
-    
-    <div class="container-fluid"> 
-        <div style="margin-top: -24px; color: white; ">                                        
-            <ul class="nav nav-tabs" style="background-color: green">                    
+
+    <div class="container-fluid">
+        <div style="margin-top: -24px; color: white; ">
+            <ul class="nav nav-tabs" style="background-color: green">
                 <li class="active" style="padding-top: 0.7em; padding-bottom: 0.7em; ">
                     <h4>MINE ORDRER</h4>
                 </li>
             </ul>
-        </div>        
+        </div>
     </div>
 
 
     <div class="container-fluid">
         <a href="#" class="btn" id="dp" data-date-format="yyyy-mm-dd" data-date="{{ current_order_date }}"> {{ current_order_date }} </a>
-        {% if is_past_allowed_time == False and current_order_date == date|date:'Y - m - d' and items|length != 0%}  
-            <button class="btn btn-default" onclick="submitAllForms()"> Gem </button>
+        {% if is_past_allowed_time == False and current_order_date == date|date:'Y - m - d' and items|length != 0%}
+            <button class="btn btn-default" id="saveBtn" onclick="submitAllForms()" style="display: none">  Gem </button>
         {% endif %}
-    </div>        
+    </div>
 
-    
+
     {% if items|length != 0 %}
         <table class="table">
-            
-            <thead>                           
-                <tr>                    
+
+            <thead>
+                <tr>
                     <th class="text-center collapse_table_th"         > Nr </th>
-                    <th class="text-left  "  id="no-padding-right"    > Produkt </th>                            
+                    <th class="text-left  "  id="no-padding-right"    > Produkt </th>
                     <th class="text-center"  id="no-padding"          > Antal små </th>
                     <th class="text-center collapse_table_th"  id="no-padding"          > Pris lille </th>
-                    <th class="text-center"  id="no-padding"          > Antal store </th>  
-                    <th class="text-center collapse_table_th"  id="no-padding"          > Pris stor </th>  
-                    <th id="no-padding-left"> </th>                        
+                    <th class="text-center"  id="no-padding"          > Antal store </th>
+                    <th class="text-center collapse_table_th"  id="no-padding"          > Pris stor </th>
+                    <th id="no-padding-left"> </th>
                 </tr>
-            </thead>                            
-            
+            </thead>
+
 
 
             <tbody >
-                {% for item in items %}                    
+                {% for item in items %}
                     {% if item.small_order_quantity != 0 or item.large_order_quantity != 0 %}
-                    <tr>                        
+                    <tr>
                         <td class="text-center  collapse_table_td"     > {{ item.product__nr }} </td>
-                        <td class="text-left "  id="no-padding-right"  > {{ item.product__title }} </td>                                                        
-                        <td class="text-center" id="no-padding"        > {{ item.small_order_quantity }} </td> 
+                        <td class="text-left "  id="no-padding-right"  > {{ item.product__title }} </td>
+                        <td class="text-center" id="no-padding"        > {{ item.small_order_quantity }} </td>
                         <td class="text-center  collapse_table_td" id="no-padding" > {{ item.product__small_product_price }} </td>
-                        <td class="text-center" id="no-padding"        > {{ item.large_order_quantity }} </td>                            
-                        <td class="text-center  collapse_table_td"     > {{ item.product__large_product_price }} </td>                                                       
+                        <td class="text-center" id="no-padding"        > {{ item.large_order_quantity }} </td>
+                        <td class="text-center  collapse_table_td"     > {{ item.product__large_product_price }} </td>
                         <td id="no-padding-left">
-                            {% if is_past_allowed_time == False and current_order_date == date|date:'Y - m - d' %} 
-                                <a id="show_{{ forloop.counter0 }}" > 
+                            {% if is_past_allowed_time == False and current_order_date == date|date:'Y - m - d' %}
+                                <a id="show_{{ forloop.counter0 }}" >
                                     <i class="fa fa-chevron-up  extend_row_td" id="extend_row_td_{{ forloop.counter0 }}" aria-hidden="true" ></i>
-                                </a> 
+                                </a>
                             {% endif %}
                         </td>
                     </tr>
                     {% endif %}
-                        
+
                     <tr id="to_not_concatenate">
                         <td colspan="7" style="padding: 0px; border: 0px">
                             <div id="extra_{{ forloop.counter0 }}" style="display: none;">
@@ -78,48 +78,66 @@
 
                                         <form action="{% url 'update_item_quantity' %}" id="update_item_quantity_form_{{ forloop.counter0 }}" method="POST"> {% csrf_token %}
                                             <table class="table dropdown_table" style="background-color: rgb(50,50,50, 0.07); margin: 0px;">
-                                                <tbody style="border-top-width: 0px;">                                                
+                                                <tbody style="border-top-width: 0px;">
                                                     <tr>
                                                         <td class="text-center collapse_table_td" id="no-padding-right" > {{ this_item.product.nr }} </td>
-                                                        <td class="text-left collapse_table_td" id="no-padding"         > {{ item.product__title }}. {{ forloop.counter }} </td>
+                                                        <td class="text-left collapse_table_td" id="no-padding"         > {{ item.product__title }}. </td>
 
                                                         {% if is_past_allowed_time == False and current_order_date == date|date:'Y - m - d' %}
                                                             <td class="text-center" id="no-padding-right" > Bestilt kl. {{ this_item.order.create_date|date:'H:i' }} </td>
-                                                            <td class="text-left"   id="no-padding"       > <input type="number"  style="text-align: center;  margin-top: -13px;" class="form-control" name="new_small_quantity" placeholder="Ændr små - {{ this_item.small_order_quantity  }}" min="0" pattern="\d*"> </td>
+                                                            <td class="text-left"   id="no-padding"       > <input
+                                                                                                                type="number"
+                                                                                                                style="text-align: center;  margin-top: -13px;"
+                                                                                                                class="form-control"
+                                                                                                                name="new_small_quantity"
+                                                                                                                onkeydown="shouldHideSaveBtn(event)"
+                                                                                                                placeholder="Ændr små - {{ this_item.small_order_quantity  }}"
+                                                                                                                min="0"
+                                                                                                                pattern="\d*">
+                                                            </td>
                                                             {% if this_item.product.large_product_price != 0 %}
-                                                                <td class="text-left" id="no-padding-left"> <input type="number" style="text-align: center; margin-top: -13px;" class="form-control" name="new_large_quantity" placeholder="Ændr stor - {{ this_item.large_order_quantity }}" min="0" pattern="\d*"> </td>
+                                                                <td class="text-left" id="no-padding-left"> <input
+                                                                                                                type="number"
+                                                                                                                style="text-align: center; margin-top: -13px;"
+                                                                                                                class="form-control"
+                                                                                                                name="new_large_quantity"
+                                                                                                                onkeydown="shouldHideSaveBtn(event)"
+                                                                                                                placeholder="Ændr stor - {{ this_item.large_order_quantity }}"
+                                                                                                                min="0"
+                                                                                                                pattern="\d*">
+                                                                </td>
                                                             {% endif %}
                                                             <input type="hidden" name="item_pk"     value="{{ this_item.pk }}" >
-                                                            <input type="hidden" name="destination" value="my_orders" >                                                        
+                                                            <input type="hidden" name="destination" value="my_orders" >
                                                         {% endif %}
 
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </form>
-                                                                                        
+
                                     {% endif %}
-                                {% endfor %}                               
+                                {% endfor %}
                             </div>
-                        </td>                            
-                    </tr>  
+                        </td>
+                    </tr>
 
                 {% endfor %}
             </tbody> <!-- End of table body -->
-            
+
         </table> <!-- End of table -->
 
         <div class="container-fluid">
             <div class="text-right"> Samlet pris: <strong> {{ order_sum }} </strong></div><br><br>
         </div>
-        
 
-    {% else %}                
+
+    {% else %}
         <div style="text-align: center">
             <h1> Ingen bestillinger d. {{ current_order_date }} </h1>
-        </div><br><br>                        
+        </div><br><br>
     {% endif %}
-                    
+
 </div>
 </div>
 <br>
@@ -131,16 +149,22 @@
 
 <script>
 
+    function shouldHideSaveBtn(e) {
+        // We only want to show the '#saveBtn' if the user has typed in a new order quantity
+        e.target.value != "" ? $("#saveBtn").show() : $("#saveBtn").hide()
+    }
+
+
     function submitAllForms() {
-        forms = document.getElementsByTagName('form')        
+        forms = document.getElementsByTagName('form')
         $(forms).each(function(index, row) { $('#update_item_quantity_form_' + index ).submit() })
     }
 
 
 
-    $("a[id^=show_]").click(function(event) {    
+    $("a[id^=show_]").click(function(event) {
         $("#extra_" + $(this).attr('id').substr(5)).slideToggle("slow");
-        
+
         if ( $("#extend_row_td_" + $(this).attr('id').substr(5) ).css( "transform" ) == 'none' ) {
             $("#extend_row_td_" + $(this).attr('id').substr(5)).css("-webkit-transform","rotate(180deg)", "transform","rotate(180deg)");
         } else {
@@ -152,13 +176,13 @@
     // Calls the datepicker
     $('#dp').datepicker({
         // When it renders
-        onRender: function(date) {    
-            // We get the supplied 'orders' and make sure they are safe 
+        onRender: function(date) {
+            // We get the supplied 'orders' and make sure they are safe
             var order_dates = "{{ orders|safe }}";
 
             // jQuery can only parse JSON if the strings in the dict are in double quotes, not single quotes
             var clean_order_dates = order_dates.replace(/'/g, '"');
-            parsed_order_dates = JSON.parse(clean_order_dates); 
+            parsed_order_dates = JSON.parse(clean_order_dates);
 
 
             var year = date.getFullYear();
@@ -166,23 +190,23 @@
             // Adds '1' mathematically to 'date.getMonth()' because Django get months as 0-11,
             // and Jquery as, 1-12
             var month = (date.getMonth() + 1 );
-            
+
             // To compare the dates from the datepicker to the dates supplied from view, we have to add a 0 - from '1' to '01'
             if (month.toString().length == 1) { month = "0" + month }
             if (day.toString().length == 1) { day = "0" + day }
 
             // Creates a string we can compare the current datepicker date, to all the dates supplied from the view
             var current_date = year + " - " + month + " - " + day ;
-            
-            if(jQuery.inArray(current_date, parsed_order_dates) !== -1) { 
+
+            if(jQuery.inArray(current_date, parsed_order_dates) !== -1) {
                 return date.getDate();
-            } else {        
+            } else {
                 return 'disabled'
             }
 
         }
-    })    
-    
+    })
+
     // When a date is clicked we get a new view, with the requested dates
     .on('changeDate', function(ev){
         var href = window.location.protocol + "//" + window.location.host + "/my_orders/" + ev.date.getFullYear() + "-" + (ev.date.getMonth() + 1 ) + "-" + ev.date.getDate();
